@@ -28,6 +28,6 @@ Vous aurez besoin d'une clé API personnelle pour utiliser la vérification Viru
 - **FR/EN** : changer la langue (persistance localStorage)
 
 ## Prochaines étapes
- Support Checkpoint (SandBlast URL)
- Support Egress (URL rewriting)
- Intégration additionelle d'autres threat intel feeds
+ - Support Checkpoint (SandBlast URL)
+ - Support Egress (URL rewriting)
+ - Intégration additionelle d'autres threat intel feeds
