@@ -1,5 +1,7 @@
 # Proofpoint URL Decoder + Shortener Resolver
 
+On remet parfois le poids de vérifier la validité des URL dans les courriels dans les mains des utilisateurs. La majorité des outils de sécurité de courriels réécrivent les URL et les rendent plus difficiles à lire. Cette preuve de concept permet à l'utilisateur de vérifier les URL qui seraient manipulées par Proofpoint, puis de pousser plus loin la vérification si nécessaire avec les outils VirusTotal et Google.
+
 Outil d'analyse d'URLs en HTML/JS pur (zéro dépendance) qui :
 
 - **Décodage Proofpoint** v1/v2/v3 — 100% local (regex + URL decode + base64url v3)
@@ -18,6 +20,7 @@ Ouvrez `index.html` dans votre navigateur — aucune dépendance, aucun serveur 
 python -m http.server 8080
 # puis ouvrez http://localhost:8080
 ```
+Vous aurez besoin d'une clé API personnelle pour utiliser la vérification VirusTotal https://www.virustotal.com/gui/sign-in
 
 ## Raccourcis
 
