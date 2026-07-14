@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title i18n="page_title"></title>
+  <style>
+    :root{
+      --bg:#0b1220;--card:#111b2e;--text:#e8eefc;--muted:#a9b4d0;
+      --accent:#6aa6ff;--ok:#3ddc97;--warn:#ffcc66;--bad:#ff6b6b;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:linear-gradient(180deg,#0b1220,#070b14);color:var(--text);}
+    .wrap{max-width:980px;margin:32px auto;padding:0 16px;}
+    .header{display:flex;gap:16px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;}
+    h1{font-size:20px;margin:0 0 6px 0;}
+    .sub{color:var(--muted);font-size:13px;line-height:1.4;max-width:820px}
+    .card{background:rgba(17,27,46,.92);border:1px solid rgba(106,166,255,.18);border-radius:14px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+    textarea{width:100%;min-height:120px;resize:vertical;border-radius:12px;border:1px solid rgba(106,166,255,.22);background:#0a1020;color:var(--text);padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.35;}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+    button{border:1px solid rgba(106,166,255,.35);background:rgba(106,166,255,.12);color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:600;transition:background .15s}
+    button:hover{background:rgba(106,166,255,.22)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    button.secondary{border-color:rgba(169,180,208,.25);background:rgba(169,180,208,.10)}
+    button.secondary:hover{background:rgba(169,180,208,.18)}
+    button.danger{border-color:rgba(255,107,107,.35);background:rgba(255,107,107,.10)}
+    button.danger:hover{background:rgba(255,107,107,.18)}
+    button.copy-url{border:1px solid rgba(106,166,255,.25);background:transparent;color:var(--accent);font-size:11.5px;padding:3px 9px;cursor:pointer;font-weight:500;border-radius:6px;transition:background .15s}
+    button.copy-url:hover{background:rgba(106,166,255,.12)}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;border:1px solid rgba(169,180,208,.25);color:var(--muted);font-size:12px}
+    .pill strong{color:var(--text)}
+    .grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+    @media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+    .kv{padding:14px;border-radius:12px;border:1px solid rgba(169,180,208,.18);background:rgba(10,16,32,.65);display:flex;flex-direction:column;gap:0;transition:border-color .2s}
+    .kv.risk-high{border-color:rgba(255,107,107,.45)}
+    .kv.risk-medium{border-color:rgba(255,204,102,.4)}
+    .kv.risk-low{border-color:rgba(61,220,151,.3)}
+    .kv.risk-unknown{border-color:rgba(169,180,208,.25)}
+    .k{font-size:11px;color:var(--muted);margin:0 0 4px 0;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+    .field{margin-bottom:12px}
+    .field:last-child{margin-bottom:0}
+    .v{font-family:var(--mono);font-size:12.5px;word-break:break-all;line-height:1.4;margin:0;}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px;flex-wrap:wrap}
+    .card-num{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+    .badges{display:flex;gap:5px;flex-wrap:wrap}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.02em}
+    .badge.https{background:rgba(61,220,151,.12);color:var(--ok);border:1px solid rgba(61,220,151,.3)}
+    .badge.http{background:rgba(255,107,107,.12);color:var(--bad);border:1px solid rgba(255,107,107,.3)}
+    .badge.short{background:rgba(255,204,102,.12);color:var(--warn);border:1px solid rgba(255,204,102,.3)}
+    .badge.ip{background:rgba(255,107,107,.15);color:var(--bad);border:1px solid rgba(255,107,107,.4)}
+    .badge.pp{background:rgba(106,166,255,.12);color:var(--accent);border:1px solid rgba(106,166,255,.3)}
+    .badge.exe{background:rgba(255,107,107,.15);color:var(--bad);border:1px solid rgba(255,107,107,.4)}
+    .risk-banner{display:flex;align-items:flex-start;gap:8px;padding:9px 12px;border-radius:8px;margin-bottom:12px;font-size:12.5px}
+    .risk-banner .icon{font-size:14px;line-height:1;flex-shrink:0;margin-top:1px}
+    .risk-banner .label{font-weight:700}
+    .risk-banner .reasons{font-size:11.5px;margin-top:2px;opacity:.85}
+    .risk-banner.high{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25)}
+    .risk-banner.high .label{color:var(--bad)}
+    .risk-banner.medium{background:rgba(255,204,102,.08);border:1px solid rgba(255,204,102,.2)}
+    .risk-banner.medium .label{color:var(--warn)}
+    .risk-banner.low{background:rgba(61,220,151,.07);border:1px solid rgba(61,220,151,.2)}
+    .risk-banner.low .label{color:var(--ok)}
+    .risk-banner.unknown{background:rgba(169,180,208,.06);border:1px solid rgba(169,180,208,.15)}
+    .risk-banner.unknown .label{color:var(--muted)}
+    .domain-hl{color:#fff;font-weight:700}
+    .url-decomp{font-family:var(--mono);font-size:12px;line-height:1.7;margin-top:4px}
+    .url-decomp .lbl{color:var(--muted);display:inline-block;min-width:60px}
+    .params-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;margin-top:6px}
+    .params-table td{padding:3px 8px;border-bottom:1px solid rgba(169,180,208,.08);word-break:break-all;vertical-align:top}
+    .params-table td:first-child{color:var(--accent);white-space:nowrap;padding-right:14px;min-width:80px;max-width:180px}
+    details{margin-top:6px}
+    summary{cursor:pointer;color:var(--muted);font-size:11.5px;user-select:none;list-style:none;display:inline-flex;align-items:center;gap:5px}
+    summary::-webkit-details-marker{display:none}
+    summary::before{content:'▶';font-size:8px;transition:transform .15s;display:inline-block}
+    details[open] summary::before{transform:rotate(90deg)}
+    .links-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .ext-link{font-size:11.5px;color:var(--accent);text-decoration:none;padding:4px 10px;border:1px solid rgba(106,166,255,.28);border-radius:6px;transition:background .15s}
+    .ext-link:hover{background:rgba(106,166,255,.1)}
+    /* ── VirusTotal modal ── */
+    .vt-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(3px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+    .vt-modal-box{background:#111b2e;border:1px solid rgba(106,166,255,.28);border-radius:16px;padding:24px;max-width:420px;width:100%}
+    .vt-modal-box h2{margin:0 0 8px;font-size:15px}
+    .vt-modal-box .vt-desc{margin:0 0 14px;color:var(--muted);font-size:12.5px;line-height:1.5}
+    .vt-modal-box input[type=password]{width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(106,166,255,.25);background:#0a1020;color:var(--text);font-family:var(--mono);font-size:13px;margin-bottom:10px;outline:none}
+    .vt-modal-box input[type=password]:focus{border-color:rgba(106,166,255,.5)}
+    .vt-modal-row{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+    .vt-modal-row label{font-size:12px;color:var(--muted);cursor:pointer;user-select:none}
+    .vt-modal-actions{display:flex;gap:8px;justify-content:flex-end}
+    /* ── VT result boxes ── */
+    .vt-result-area{margin-top:6px}
+    .vt-box{padding:9px 12px;border-radius:8px;font-size:12px;line-height:1.6}
+    .vt-box.clean{background:rgba(61,220,151,.07);border:1px solid rgba(61,220,151,.2)}
+    .vt-box.clean .vt-label{color:var(--ok)}
+    .vt-box.malicious{background:rgba(255,107,107,.09);border:1px solid rgba(255,107,107,.3)}
+    .vt-box.malicious .vt-label{color:var(--bad)}
+    .vt-box.suspicious{background:rgba(255,204,102,.07);border:1px solid rgba(255,204,102,.2)}
+    .vt-box.suspicious .vt-label{color:var(--warn)}
+    .vt-box.pending{background:rgba(106,166,255,.06);border:1px solid rgba(106,166,255,.18)}
+    .vt-box.pending .vt-label{color:var(--accent)}
+    .vt-box.apierr{background:rgba(255,107,107,.06);border:1px solid rgba(255,107,107,.18)}
+    .vt-box.apierr .vt-label{color:var(--bad)}
+    .vt-sub{font-size:11px;opacity:.75;margin-top:2px}
+    .vt-actions{margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .status{margin-top:10px;font-size:12.5px;color:var(--muted)}
+    .status .ok{color:var(--ok)}
+    .status .warn{color:var(--warn)}
+    .status .bad{color:var(--bad)}
+    .small{font-size:12px;color:var(--muted)}
+    .footer{margin-top:14px;color:var(--muted);font-size:12px;line-height:1.5}
+    .footer code{font-family:var(--mono);font-size:12px;color:#d7e3ff}
+    a{color:var(--accent)}
+    .list{margin:0;padding-left:18px}
+    .list li{margin-bottom:3px}
+    kbd{display:inline-block;padding:1px 5px;border:1px solid rgba(169,180,208,.3);border-radius:4px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+    .spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(106,166,255,.25);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    /* ── Lang toggle ── */
+    .lang-toggle{display:inline-flex;border-radius:8px;overflow:hidden;border:1px solid rgba(106,166,255,.3);margin:0 0 0 auto}
+    .lang-toggle button{border:none;background:rgba(106,166,255,.08);color:var(--muted);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;line-height:1}
+    .lang-toggle button.active{background:rgba(106,166,255,.25);color:var(--accent)}
+    .lang-toggle button:hover:not(.active){background:rgba(106,166,255,.12)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1 i18n="h1"></h1>
+        <div class="sub" i18n="subtitle"></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="pill"><span i18n="mode_label"></span> <strong i18n="mode_value"></strong></div>
+        <div class="lang-toggle">
+          <button data-lang="fr" class="active">FR</button>
+          <button data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <label class="small" for="input" i18n="input_label"></label>
+      <textarea id="input" i18n-placeholder="input_placeholder"></textarea>
+      <div class="row">
+        <button id="analyzeBtn" i18n="btn_analyze"></button>
+        <button id="copyBtn" class="secondary" i18n="btn_copy"></button>
+        <button id="clearBtn" class="danger" i18n="btn_clear"></button>
+        <span class="status" id="status"></span>
+      </div>
+
+      <div class="grid" id="results"></div>
+
+      <div class="footer">
+        <strong i18n="notes_label"></strong>
+        <ul class="list">
+          <li i18n="note_1"></li>
+          <li i18n="note_2"></li>
+          <li i18n="note_3"></li>
+          <li i18n="note_4"></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+// ── i18n ─────────────────────────────────────────────────────────────────────
+const T = {
+  fr: {
+    page_title: 'Décodeur URL Proofpoint + Résolution best effort',
+    h1: 'Décodeur Proofpoint URL Defense + Résolution de raccourcisseurs (best effort)',
+    subtitle: 'Collez une ou plusieurs URLs (une par ligne). L\'outil décode les liens <code>urldefense.proofpoint.com</code> (v1/v2/v3) localement, puis tente de résoudre les raccourcisseurs. <strong>Aucune URL n\'est ouverte automatiquement.</strong> Raccourci : <kbd>Ctrl+Entrée</kbd> pour lancer l\'analyse.',
+    mode_label: 'Mode :',
+    mode_value: 'Local (HTML + JS)',
+    input_label: 'URLs à analyser',
+    input_placeholder: 'Collez ici…\nEx: https://urldefense.proofpoint.com/v3/__https://bit.ly/xxxx__;!!...!',
+    btn_analyze: 'Analyser',
+    btn_copy: 'Copier les résultats',
+    btn_clear: 'Effacer',
+    notes_label: 'Notes :',
+    note_1: 'Décodage Proofpoint : 100% local (regex + décodage URL + base64url v3).',
+    note_2: 'Résolution raccourcisseurs : tente <code>HEAD</code> puis <code>GET</code> et lit <code>response.url</code>. Peut échouer selon les politiques CORS/anti-bot du site.',
+    note_3: 'Évaluation risque : indicateurs heuristiques locaux (HTTP, IP directe, extension exécutable, domaine anormal) — non exhaustifs.',
+    note_4: 'Les liens externes (VirusTotal, Google Safe Browsing) ne sont jamais visités automatiquement.',
+    risk_high: 'Risque élevé',
+    risk_medium: 'Risque modéré',
+    risk_low: 'Faible risque',
+    risk_unknown: 'Inconnu',
+    result: 'Résultat',
+    entry: 'Entrée',
+    decoded_url: 'URL décodée',
+    final_dest: 'Destination finale',
+    url_decomp: 'Décomposition URL cible',
+    scheme: 'Scheme',
+    host: 'Host',
+    path: 'Chemin',
+    fragment: 'Fragment',
+    query_params: 'paramètre(s) query',
+    ext_check: 'Vérification externe',
+    vt_btn: '🔍 VirusTotal',
+    gsb_link: '🛡 Google Safe Browsing',
+    copy_url: '📋 Copier l\'URL',
+    copied: '✓ Copié',
+    notes: 'Notes',
+    errors: 'Erreurs',
+    shortener: 'Raccourcisseur',
+    direct_ip: 'IP directe',
+    reason_http: 'HTTP non chiffré',
+    reason_ip: 'IP directe (pas de domaine)',
+    reason_short: 'Raccourcisseur non résolu',
+    reason_exe: 'Extension fichier exécutable',
+    reason_numeric: 'Séquence numérique longue dans le domaine',
+    reason_subdomain: 'Sous-domaine anormalement long',
+    reason_cyrillic: 'Caractères cyrilliques dans le domaine (IDN)',
+    reason_unknown: 'URL cible inconnue',
+    reason_unparseable: 'URL non parseable',
+    reason_none: 'Aucun indicateur détecté',
+    status_paste: 'Veuillez coller au moins une URL.',
+    status_analyzing: 'Analyse en cours…',
+    status_done: 'Terminé.',
+    status_results: 'résultat(s)',
+    status_high: 'risque(s) élevé(s)',
+    status_medium: 'risque(s) modéré(s)',
+    status_no_results: 'Aucun résultat à copier.',
+    status_copied: 'Résultats copiés dans le presse-papiers.',
+    status_copied_fb: 'Résultats copiés (fallback).',
+    vt_title: '🔍 VirusTotal — Clé API',
+    vt_desc: 'Entrez votre clé API VirusTotal (gratuite sur <a href="https://www.virustotal.com/gui/my-apikey" target="_blank" rel="noopener">virustotal.com</a>). Elle reste dans votre navigateur, jamais transmise ailleurs.',
+    vt_placeholder: 'Clé API…',
+    vt_persist: 'Mémoriser entre les sessions (localStorage)',
+    vt_cancel: 'Annuler',
+    vt_submit: 'Analyser',
+    vt_cors_title: '⚠ API bloquée (CORS — origine <code>file://</code>)',
+    vt_cors_desc: 'L\'API VT requiert un contexte HTTP. Lancez un serveur local :<br><code style="color:#d7e3ff">python -m http.server 8080</code> puis ouvrez <code style="color:#d7e3ff">http://localhost:8080/analysteURL.html</code>',
+    vt_fallback: '📋 Copier l\'URL + ouvrir VT manuellement',
+    vt_fallback_done: '✓ URL copiée — collez dans VT',
+    vt_querying: 'Interrogation VirusTotal…',
+    vt_invalid_key: 'Clé API invalide ou expirée — cliquez à nouveau pour en saisir une nouvelle',
+    vt_quota: 'Quota API dépassé (4 requêtes/min sur le plan gratuit)',
+    vt_quota_short: 'Quota API dépassé (4 requêtes/min)',
+    vt_submitted: '⏳ URL soumise pour la première fois',
+    vt_submit_desc: 'L\'analyse prend ~1 minute. Résultats disponibles sur VirusTotal.',
+    vt_view: 'Voir sur VT →',
+    vt_recheck: '↻ Vérifier à nouveau',
+    vt_reanalyze: '↻ Ré-analyser',
+    vt_changekey: '🔑 Changer de clé',
+    vt_malicious: 'MALVEILLANTE',
+    vt_suspicious: 'SUSPECTE',
+    vt_clean: 'Aucune détection',
+    vt_no_stats: 'Aucune statistique disponible',
+    vt_mal: 'Malveillant',
+    vt_sus: 'Suspect',
+    vt_cln: 'Propre',
+    vt_uneval: 'Non évalué',
+    vt_last_analysis: 'Dernière analyse',
+    vt_full_report: 'Rapport complet →',
+    clipboard_entry: 'Entrée',
+    clipboard_proofpoint: 'Proofpoint',
+    clipboard_decoded: 'URL décodée',
+    clipboard_shortener: 'Raccourcisseur',
+    clipboard_final: 'Destination finale',
+    clipboard_risk: 'Risque',
+    clipboard_notes: 'Notes',
+    clipboard_errors: 'Erreurs',
+    clipboard_yes: 'oui',
+    clipboard_no: 'non',
+    gsb_lang: 'fr',
+    pp_yes: 'Oui',
+    pp_failed: 'Oui (échec décodage)',
+    pp_no: 'Non',
+    err_not_proofpoint: 'Ne semble pas être une URL Proofpoint URL Defense',
+    err_parse_v1: 'Erreur parsing v1',
+    err_parse_v2: 'Erreur parsing v2',
+    err_parse_v3: 'Erreur parsing v3 — structure non reconnue',
+    err_invalid_token: 'Token v3 invalide',
+    err_invalid_url: 'URL invalide',
+    note_redirect: 'Redirection suivie',
+    note_unresolved: 'Destination finale non résolue (best effort/CORS/timeout)',
+    err_vt: 'Erreur VT',
+    err_copy: 'Erreur',
+  },
+  en: {
+    page_title: 'Proofpoint URL Decoder + Best Effort Resolution',
+    h1: 'Proofpoint URL Defense Decoder + Shortener Resolution (best effort)',
+    subtitle: 'Paste one or more URLs (one per line). The tool decodes <code>urldefense.proofpoint.com</code> links (v1/v2/v3) locally, then attempts to resolve shorteners. <strong>No URL is opened automatically.</strong> Shortcut: <kbd>Ctrl+Enter</kbd> to start analysis.',
+    mode_label: 'Mode:',
+    mode_value: 'Local (HTML + JS)',
+    input_label: 'URLs to analyze',
+    input_placeholder: 'Paste here…\nEx: https://urldefense.proofpoint.com/v3/__https://bit.ly/xxxx__;!!...!',
+    btn_analyze: 'Analyze',
+    btn_copy: 'Copy results',
+    btn_clear: 'Clear',
+    notes_label: 'Notes:',
+    note_1: 'Proofpoint decoding: 100% local (regex + URL decoding + base64url v3).',
+    note_2: 'Shortener resolution: tries <code>HEAD</code> then <code>GET</code> and reads <code>response.url</code>. May fail depending on site CORS/anti-bot policies.',
+    note_3: 'Risk assessment: local heuristic indicators (HTTP, direct IP, executable extension, abnormal domain) — not exhaustive.',
+    note_4: 'External links (VirusTotal, Google Safe Browsing) are never visited automatically.',
+    risk_high: 'High risk',
+    risk_medium: 'Moderate risk',
+    risk_low: 'Low risk',
+    risk_unknown: 'Unknown',
+    result: 'Result',
+    entry: 'Input',
+    decoded_url: 'Decoded URL',
+    final_dest: 'Final destination',
+    url_decomp: 'Target URL breakdown',
+    scheme: 'Scheme',
+    host: 'Host',
+    path: 'Path',
+    fragment: 'Fragment',
+    query_params: 'query parameter(s)',
+    ext_check: 'External check',
+    vt_btn: '🔍 VirusTotal',
+    gsb_link: '🛡 Google Safe Browsing',
+    copy_url: '📋 Copy URL',
+    copied: '✓ Copied',
+    notes: 'Notes',
+    errors: 'Errors',
+    shortener: 'Shortener',
+    direct_ip: 'Direct IP',
+    reason_http: 'Unencrypted HTTP',
+    reason_ip: 'Direct IP (no domain)',
+    reason_short: 'Unresolved shortener',
+    reason_exe: 'Executable file extension',
+    reason_numeric: 'Long numeric sequence in domain',
+    reason_subdomain: 'Abnormally long subdomain',
+    reason_cyrillic: 'Cyrillic characters in domain (IDN)',
+    reason_unknown: 'Unknown target URL',
+    reason_unparseable: 'Unparseable URL',
+    reason_none: 'No indicators detected',
+    status_paste: 'Please paste at least one URL.',
+    status_analyzing: 'Analyzing…',
+    status_done: 'Done.',
+    status_results: 'result(s)',
+    status_high: 'high risk(s)',
+    status_medium: 'moderate risk(s)',
+    status_no_results: 'No results to copy.',
+    status_copied: 'Results copied to clipboard.',
+    status_copied_fb: 'Results copied (fallback).',
+    vt_title: '🔍 VirusTotal — API Key',
+    vt_desc: 'Enter your VirusTotal API key (free at <a href="https://www.virustotal.com/gui/my-apikey" target="_blank" rel="noopener">virustotal.com</a>). It stays in your browser, never sent elsewhere.',
+    vt_placeholder: 'API key…',
+    vt_persist: 'Remember between sessions (localStorage)',
+    vt_cancel: 'Cancel',
+    vt_submit: 'Analyze',
+    vt_cors_title: '⚠ API blocked (CORS — <code>file://</code> origin)',
+    vt_cors_desc: 'The VT API requires an HTTP context. Start a local server:<br><code style="color:#d7e3ff">python -m http.server 8080</code> then open <code style="color:#d7e3ff">http://localhost:8080/analysteURL.html</code>',
+    vt_fallback: '📋 Copy URL + open VT manually',
+    vt_fallback_done: '✓ URL copied — paste in VT',
+    vt_querying: 'Querying VirusTotal…',
+    vt_invalid_key: 'Invalid or expired API key — click again to enter a new one',
+    vt_quota: 'API quota exceeded (4 requests/min on free plan)',
+    vt_quota_short: 'API quota exceeded (4 requests/min)',
+    vt_submitted: '⏳ URL submitted for the first time',
+    vt_submit_desc: 'Analysis takes ~1 minute. Results available on VirusTotal.',
+    vt_view: 'View on VT →',
+    vt_recheck: '↻ Check again',
+    vt_reanalyze: '↻ Re-analyze',
+    vt_changekey: '🔑 Change key',
+    vt_malicious: 'MALICIOUS',
+    vt_suspicious: 'SUSPICIOUS',
+    vt_clean: 'No detections',
+    vt_no_stats: 'No statistics available',
+    vt_mal: 'Malicious',
+    vt_sus: 'Suspicious',
+    vt_cln: 'Clean',
+    vt_uneval: 'Unevaluated',
+    vt_last_analysis: 'Last analysis',
+    vt_full_report: 'Full report →',
+    clipboard_entry: 'Input',
+    clipboard_proofpoint: 'Proofpoint',
+    clipboard_decoded: 'Decoded URL',
+    clipboard_shortener: 'Shortener',
+    clipboard_final: 'Final destination',
+    clipboard_risk: 'Risk',
+    clipboard_notes: 'Notes',
+    clipboard_errors: 'Errors',
+    clipboard_yes: 'yes',
+    clipboard_no: 'no',
+    gsb_lang: 'en',
+    pp_yes: 'Yes',
+    pp_failed: 'Yes (decode failed)',
+    pp_no: 'No',
+    err_not_proofpoint: 'Does not appear to be a Proofpoint URL Defense URL',
+    err_parse_v1: 'v1 parsing error',
+    err_parse_v2: 'v2 parsing error',
+    err_parse_v3: 'v3 parsing error — unrecognized structure',
+    err_invalid_token: 'Invalid v3 token',
+    err_invalid_url: 'Invalid URL',
+    note_redirect: 'Redirect followed',
+    note_unresolved: 'Final destination unresolved (best effort/CORS/timeout)',
+    err_vt: 'VT error',
+    err_copy: 'Error',
+  }
+};
+
+let currentLang = localStorage.getItem('urlAnalyzer_lang') || 'fr';
+
+function t(key) {
+  return T[currentLang]?.[key] ?? T.fr[key] ?? key;
+}
+
+function applyLang() {
+  const L = T[currentLang];
+  // title
+  document.title = L.page_title;
+  // i18n text
+  document.querySelectorAll('[i18n]').forEach(el => {
+    const key = el.getAttribute('i18n');
+    if (L[key] !== undefined) el.innerHTML = L[key];
+  });
+  // i18n placeholders
+  document.querySelectorAll('[i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('i18n-placeholder');
+    if (L[key] !== undefined) el.placeholder = L[key];
+  });
+  // html lang
+  document.documentElement.lang = currentLang;
+  // toggle active
+  document.querySelectorAll('.lang-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === currentLang);
+  });
+}
+
+// ── Utilitaires ──────────────────────────────────────────────────────────────
+const $ = (id) => document.getElementById(id);
+
+function setStatus(html) { $('status').innerHTML = html || ''; }
+
+function escapeHtml(str) {
+  return (str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+function safeUrl(str) {
+  try { return new URL(str).toString(); } catch { return null; }
+}
+
+function htmlUnescape(str) {
+  const txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
+}
+
+function base64UrlDecodeToString(b64url) {
+  let s = (b64url || '').replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  const bin = atob(s);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+}
+
+// ── Proofpoint URL Defense decode (v1/v2/v3) ────────────────────────────────
+const UD_PATTERN    = /https:\/\/urldefense(?:\.proofpoint)?\.com\/(v[0-9])\//i;
+const V1_PATTERN    = /u=(?<url>.+?)&k=/i;
+const V2_PATTERN    = /u=(?<url>.+?)&\[dc\]=/i;
+const V3_MAIN       = /v3\/__(?<url>.+?)__;.*!(?<enc_bytes>[^!]*)!/i;
+const V3_TOKEN      = /\*(\*.)?/g;
+const V3_SINGLE_SL  = /^(?:([a-z0-9+.-]+:\/))([^/].+)/i;
+
+const RUN_VALUES = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+const V3_RUN_MAP = (() => {
+  const map = new Map();
+  let len = 2;
+  for (const ch of RUN_VALUES) map.set(ch, len++);
+  return map;
+})();
+
+function decodeProofpoint(rewrittenUrl) {
+  const m = UD_PATTERN.exec(rewrittenUrl);
+  if (!m) throw new Error(t('err_not_proofpoint'));
+  const ver = m[1].toLowerCase();
+  if (ver === 'v1') return { decoded: decodeV1(rewrittenUrl), version: 'v1' };
+  if (ver === 'v2') return { decoded: decodeV2(rewrittenUrl), version: 'v2' };
+  if (ver === 'v3') return { decoded: decodeV3(rewrittenUrl), version: 'v3' };
+  throw new Error('Proofpoint version not recognized');
+}
+
+function decodeV1(url) {
+  const m = V1_PATTERN.exec(url);
+  if (!m?.groups?.url) throw new Error(t('err_parse_v1'));
+  return htmlUnescape(decodeURIComponent(m.groups.url));
+}
+
+function decodeV2(url) {
+  const m = V2_PATTERN.exec(url);
+  if (!m?.groups?.url) throw new Error(t('err_parse_v2'));
+  const encoded = m.groups.url.replace(/-/g, '%').replace(/_/g, '/');
+  return htmlUnescape(decodeURIComponent(encoded));
+}
+
+function decodeV3(rewrittenUrl) {
+  const m = V3_MAIN.exec(rewrittenUrl);
+  if (!m?.groups?.url) throw new Error(t('err_parse_v3'));
+  let url = m.groups.url;
+  const ss = V3_SINGLE_SL.exec(url);
+  if (ss?.[1] && ss?.[2]) url = ss[1] + '/' + ss[2];
+  const encodedUrl = decodeURIComponent(url);
+  const decBytes = base64UrlDecodeToString(m.groups.enc_bytes);
+  let marker = 0;
+  return encodedUrl.replace(V3_TOKEN, (token) => {
+    if (token === '*') return decBytes[marker++] ?? '';
+    if (token.startsWith('**')) {
+      const runLen = V3_RUN_MAP.get(token[token.length - 1]);
+      if (!runLen) throw new Error(t('err_invalid_token'));
+      const run = decBytes.slice(marker, marker + runLen);
+      marker += runLen;
+      return run;
+    }
+    return token;
+  });
+}
+
+// ── Raccourcisseurs / Shorteners ────────────────────────────────────────────
+const SHORTENER_RE = /\b(bit\.ly|tinyurl\.com|t\.co|goo\.gl|is\.gd|buff\.ly|ow\.ly|bitly\.com|rebrand\.ly|cutt\.ly|shorturl\.at|trib\.al|lnkd\.in|shorte\.st|u\.to|t\.ly|v\.gd|tiny\.cc|snip\.ly|bl\.ink|soo\.gd|clck\.ru|bc\.vc)\b/i;
+
+function isShortener(url) {
+  try { return SHORTENER_RE.test(new URL(url).hostname); }
+  catch { return false; }
+}
+
+async function expandShortUrlBestEffort(url, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    for (const method of ['HEAD', 'GET']) {
+      try {
+        const res = await fetch(url, { method, redirect: 'follow', cache: 'no-store', signal: controller.signal });
+        if (res?.url) return res.url;
+      } catch (e) {
+        if (e?.name === 'AbortError') return null;
+      }
+    }
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// ── Analyse URL ──────────────────────────────────────────────────────────────
+const EXE_RE = /\.(exe|bat|ps1|cmd|vbs|js|jar|msi|dmg|pkg|sh|elf|apk|hta|scr|pif|com)(\?|#|$)/i;
+
+function parseUrlComponents(rawUrl) {
+  try {
+    const u = new URL(rawUrl);
+    const params = [];
+    u.searchParams.forEach((v, k) => params.push({ k, v }));
+    return {
+      scheme: u.protocol.replace(':', ''),
+      host: u.hostname,
+      port: u.port,
+      path: u.pathname,
+      params,
+      fragment: u.hash,
+      isIp: /^\d{1,3}(\.\d{1,3}){3}$/.test(u.hostname),
+    };
+  } catch { return null; }
+}
+
+function assessRisk(row) {
+  const targetUrl = row.finalUrl || row.decodedUrl;
+  if (!targetUrl) return { level: 'unknown', reasons: [t('reason_unknown')] };
+  const comp = parseUrlComponents(targetUrl);
+  if (!comp) return { level: 'unknown', reasons: [t('reason_unparseable')] };
+
+  const reasons = [];
+  let level = 'low';
+
+  const up = (l) => { if (l === 'high' || (l === 'medium' && level === 'low')) level = l; };
+
+  if (comp.scheme === 'http')              { reasons.push(t('reason_http')); up('medium'); }
+  if (comp.isIp)                           { reasons.push(t('reason_ip')); up('high'); }
+  if (row.isShort && !row.finalUrl)        { reasons.push(t('reason_short')); up('medium'); }
+  if (EXE_RE.test(comp.path))              { reasons.push(t('reason_exe')); up('high'); }
+  if (/\d{5,}/.test(comp.host))            { reasons.push(t('reason_numeric')); up('medium'); }
+  if (comp.host.split('.').some(p => p.length > 50)) { reasons.push(t('reason_subdomain')); up('medium'); }
+  if (/[а-яёА-ЯЁ]|[Ѐ-ӿ]/.test(comp.host)) { reasons.push(t('reason_cyrillic')); up('high'); }
+
+  if (reasons.length === 0) reasons.push(t('reason_none'));
+  return { level, reasons };
+}
+
+// ── Rendu ────────────────────────────────────────────────────────────────────
+const RISK_META = {
+  high:    { icon: '✕' },
+  medium:  { icon: '⚠' },
+  low:     { icon: '✓' },
+  unknown: { icon: '?' },
+};
+
+function riskLabel(key) {
+  return t(key);
+}
+
+function renderResultCard(idx, data) {
+  const { inputUrl, proofpoint, decodedUrl, isShort, finalUrl, notes, errors } = data;
+  const targetUrl = finalUrl || decodedUrl;
+  const comp = targetUrl ? parseUrlComponents(targetUrl) : null;
+  const { level, reasons } = assessRisk(data);
+  const rm = RISK_META[level];
+  const L = T[currentLang];
+
+  // URL decomposition block
+  let urlDecompHtml = '';
+  if (comp) {
+    const schemeBadge = `<span class="badge ${comp.scheme === 'https' ? 'https' : 'http'}">${comp.scheme.toUpperCase()}</span>`;
+    const ipBadge = comp.isIp ? ` <span class="badge ip">${L.direct_ip}</span>` : '';
+    const portStr = comp.port ? `<span style="color:var(--muted)">:${escapeHtml(comp.port)}</span>` : '';
+    urlDecompHtml = `
+      <div class="field">
+        <div class="k">${L.url_decomp}</div>
+        <div class="url-decomp">
+          <span class="lbl">${L.scheme}</span>${schemeBadge}<br>
+          <span class="lbl">${L.host}</span><span class="domain-hl">${escapeHtml(comp.host)}</span>${portStr}${ipBadge}<br>
+          ${comp.path && comp.path !== '/' ? `<span class="lbl">${L.path}</span><span style="color:#d7e3ff">${escapeHtml(comp.path)}</span><br>` : ''}
+          ${comp.fragment ? `<span class="lbl">${L.fragment}</span>${escapeHtml(comp.fragment)}<br>` : ''}
+        </div>
+        ${comp.params.length > 0 ? `
+          <details>
+            <summary>${comp.params.length} ${L.query_params}</summary>
+            <table class="params-table">
+              ${comp.params.map(p => `<tr><td>${escapeHtml(p.k)}</td><td>${escapeHtml(p.v)}</td></tr>`).join('')}
+            </table>
+          </details>` : ''}
+      </div>`;
+  }
+
+  // External check links
+  let extHtml = '';
+  if (targetUrl) {
+    const gsbSearch = `https://transparencyreport.google.com/safe-browsing/search?url=${encodeURIComponent(targetUrl)}&hl=${L.gsb_lang}`;
+    extHtml = `
+      <div class="field">
+        <div class="k">${L.ext_check}</div>
+        <div class="links-row">
+          <button class="ext-link vt-btn">${L.vt_btn}</button>
+          <a class="ext-link" href="${escapeHtml(gsbSearch)}" target="_blank" rel="noopener noreferrer">${L.gsb_link}</a>
+          <button class="copy-url" data-url="${escapeHtml(targetUrl)}">${L.copy_url}</button>
+        </div>
+        <div class="vt-result-area"></div>
+      </div>`;
+  }
+
+  // Header badges
+  const badgesHtml = [
+    isShort ? `<span class="badge short">${L.shortener}</span>` : '',
+    proofpoint && proofpoint !== L.pp_no ? '<span class="badge pp">Proofpoint</span>' : '',
+    comp?.isIp ? `<span class="badge ip">${L.direct_ip}</span>` : '',
+    comp && comp.scheme !== 'https' ? '<span class="badge http">HTTP</span>' : '',
+    comp && EXE_RE.test(comp.path) ? '<span class="badge exe">EXE</span>' : '',
+  ].filter(Boolean).join('');
+
+  const card = document.createElement('div');
+  card.className = `kv risk-${level}`;
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="card-num">${L.result} #${idx + 1}</span>
+      <div class="badges">${badgesHtml}</div>
+    </div>
+    <div class="risk-banner ${level}">
+      <span class="icon">${rm.icon}</span>
+      <div>
+        <div class="label">${riskLabel('risk_' + level)}</div>
+        <div class="reasons">${escapeHtml(reasons.join(' · '))}</div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="k">${L.entry}</div>
+      <div class="v">${escapeHtml(inputUrl)}</div>
+    </div>
+    ${decodedUrl && decodedUrl !== inputUrl ? `
+    <div class="field">
+      <div class="k">${L.decoded_url} (${escapeHtml(proofpoint || '')})</div>
+      <div class="v">${escapeHtml(decodedUrl)}</div>
+    </div>` : ''}
+    <div class="field">
+      <div class="k">${L.final_dest}</div>
+      <div class="v">${escapeHtml(targetUrl || '—')}</div>
+    </div>
+    ${urlDecompHtml}
+    ${extHtml}
+    ${notes?.length ? `<div class="field"><div class="k">${L.notes}</div><div class="v" style="color:var(--muted)">${escapeHtml(notes.join(' · '))}</div></div>` : ''}
+    ${errors?.length ? `<div class="field"><div class="k" style="color:var(--bad)">${L.errors}</div><div class="v" style="color:var(--bad)">${escapeHtml(errors.join(' · '))}</div></div>` : ''}
+  `;
+
+  // VirusTotal buttons: API lookup with modal key input
+  card.querySelectorAll('button.vt-btn').forEach(btn => {
+    const resultArea = btn.closest('.field').querySelector('.vt-result-area');
+    btn.addEventListener('click', () => {
+      if (getStoredVtKey()) {
+        runVtCheck(targetUrl, resultArea);
+      } else {
+        showVtModal(targetUrl, resultArea);
+      }
+    });
+  });
+
+  // Copy URL buttons
+  card.querySelectorAll('button.copy-url').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.url;
+      try {
+        await navigator.clipboard.writeText(url);
+        const orig = btn.textContent;
+        btn.textContent = L.copied;
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      } catch { btn.textContent = L.err_copy; }
+    });
+  });
+
+  return card;
+}
+
+// ── VirusTotal API ───────────────────────────────────────────────────────────
+const VT_API = 'https://www.virustotal.com/api/v3';
+
+function vtUrlId(url) {
+  const bytes = new TextEncoder().encode(url);
+  let binary = '';
+  bytes.forEach(b => (binary += String.fromCharCode(b)));
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function getStoredVtKey() {
+  return sessionStorage.getItem('vt_apikey') || localStorage.getItem('vt_apikey') || '';
+}
+
+function storeVtKey(key, persist) {
+  sessionStorage.setItem('vt_apikey', key);
+  if (persist) localStorage.setItem('vt_apikey', key);
+  else localStorage.removeItem('vt_apikey');
+}
+
+function clearVtKey() {
+  sessionStorage.removeItem('vt_apikey');
+  localStorage.removeItem('vt_apikey');
+}
+
+function showVtModal(targetUrl, resultArea) {
+  document.getElementById('vt-modal')?.remove();
+  const storedKey = getStoredVtKey();
+  const isPersisted = !!localStorage.getItem('vt_apikey');
+  const L = T[currentLang];
+
+  const overlay = document.createElement('div');
+  overlay.id = 'vt-modal';
+  overlay.className = 'vt-modal-overlay';
+  overlay.innerHTML = `
+    <div class="vt-modal-box">
+      <h2>${L.vt_title}</h2>
+      <p class="vt-desc">${L.vt_desc}</p>
+      <input type="password" id="vt-key-input" placeholder="${L.vt_placeholder}" autocomplete="off" spellcheck="false" value="${escapeHtml(storedKey)}" />
+      <div class="vt-modal-row">
+        <input type="checkbox" id="vt-persist" ${isPersisted ? 'checked' : ''} />
+        <label for="vt-persist">${L.vt_persist}</label>
+      </div>
+      <div class="vt-modal-actions">
+        <button class="secondary" id="vt-cancel">${L.vt_cancel}</button>
+        <button id="vt-submit">${L.vt_submit}</button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  const input = document.getElementById('vt-key-input');
+  input.focus();
+  if (storedKey) input.select();
+
+  const close = () => overlay.remove();
+  document.getElementById('vt-cancel').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  const submit = () => {
+    const key = input.value.trim();
+    if (!key) { input.style.borderColor = 'var(--bad)'; return; }
+    storeVtKey(key, document.getElementById('vt-persist').checked);
+    close();
+    runVtCheck(targetUrl, resultArea);
+  };
+  document.getElementById('vt-submit').addEventListener('click', submit);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+}
+
+function showVtCorsWarning(targetUrl, resultArea) {
+  const L = T[currentLang];
+  resultArea.innerHTML = `
+    <div class="vt-box apierr">
+      <div class="vt-label">${L.vt_cors_title}</div>
+      <div class="vt-sub" style="margin-top:4px">
+        ${L.vt_cors_desc}
+      </div>
+      <div class="vt-actions" style="margin-top:8px">
+        <button class="copy-url vt-fallback">${L.vt_fallback}</button>
+      </div>
+    </div>`;
+  resultArea.querySelector('.vt-fallback').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(targetUrl); } catch {}
+    window.open('https://www.virustotal.com/gui/home/url', '_blank', 'noopener,noreferrer');
+    resultArea.querySelector('.vt-fallback').textContent = L.vt_fallback_done;
+  });
+}
+
+async function runVtCheck(targetUrl, resultArea) {
+  const apiKey = getStoredVtKey();
+  const L = T[currentLang];
+
+  if (location.protocol === 'file:') {
+    showVtCorsWarning(targetUrl, resultArea);
+    return;
+  }
+
+  resultArea.innerHTML = `<div class="vt-box pending"><span class="vt-label"><span class="spinner"></span> ${L.vt_querying}</span></div>`;
+
+  try {
+    const id = vtUrlId(targetUrl);
+    const headers = { 'x-apikey': apiKey };
+
+    let res = await fetch(`${VT_API}/urls/${id}`, { headers });
+
+    if (res.status === 401) {
+      clearVtKey();
+      throw new Error(L.vt_invalid_key);
+    }
+    if (res.status === 429) {
+      throw new Error(L.vt_quota);
+    }
+
+    if (res.status === 404) {
+      const postRes = await fetch(`${VT_API}/urls`, {
+        method: 'POST',
+        headers: { ...headers, 'content-type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ url: targetUrl }).toString()
+      });
+
+      if (postRes.status === 401) { clearVtKey(); throw new Error(L.vt_invalid_key); }
+      if (postRes.status === 429) throw new Error(L.vt_quota_short);
+      if (!postRes.ok) {
+        const err = await postRes.json().catch(() => ({}));
+        throw new Error(err?.error?.message || `${t('err_vt')} ${postRes.status}`);
+      }
+
+      const guiUrl = `https://www.virustotal.com/gui/url/${id}/detection`;
+      resultArea.innerHTML = `
+        <div class="vt-box pending">
+          <div class="vt-label">${L.vt_submitted}</div>
+          <div class="vt-sub">${L.vt_submit_desc}</div>
+          <div class="vt-actions">
+            <a href="${escapeHtml(guiUrl)}" target="_blank" rel="noopener noreferrer" class="ext-link" style="font-size:11px">${L.vt_view}</a>
+            <button class="copy-url vt-recheck">${L.vt_recheck}</button>
+          </div>
+        </div>`;
+      resultArea.querySelector('.vt-recheck').addEventListener('click', () => runVtCheck(targetUrl, resultArea));
+      return;
+    }
+
+    if (!res.ok) throw new Error(`${L.err_vt} ${res.status}`);
+
+    const data = await res.json();
+    renderVtResult(data, id, targetUrl, resultArea);
+
+  } catch (e) {
+    if (e instanceof TypeError) {
+      showVtCorsWarning(targetUrl, resultArea);
+    } else {
+      resultArea.innerHTML = `<div class="vt-box apierr"><div class="vt-label">✕ ${escapeHtml(String(e?.message || e))}</div></div>`;
+    }
+  }
+}
+
+function renderVtResult(data, urlId, targetUrl, resultArea) {
+  const L = T[currentLang];
+  const stats = data.data?.attributes?.last_analysis_stats || {};
+  const { malicious = 0, suspicious = 0, undetected = 0, harmless = 0 } = stats;
+  const total = malicious + suspicious + undetected + harmless;
+  const lastTs = data.data?.attributes?.last_analysis_date;
+  const dateStr = lastTs ? new Date(lastTs * 1000).toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US') : null;
+  const guiUrl = `https://www.virustotal.com/gui/url/${urlId}/detection`;
+
+  let cls, label;
+  if (malicious > 0)       { cls = 'malicious'; label = `✕ ${malicious}/${total} — ${L.vt_malicious}`; }
+  else if (suspicious > 0) { cls = 'suspicious'; label = `⚠ ${suspicious}/${total} — ${L.vt_suspicious}`; }
+  else if (total > 0)      { cls = 'clean';      label = `✓ ${total} moteurs — ${L.vt_clean}`; }
+  else                     { cls = 'pending';    label = L.vt_no_stats; }
+
+  resultArea.innerHTML = `
+    <div class="vt-box ${cls}">
+      <div class="vt-label" style="font-weight:700">${label}</div>
+      ${total > 0 ? `<div class="vt-sub">${L.vt_mal}: ${malicious} · ${L.vt_sus}: ${suspicious} · ${L.vt_cln}: ${harmless} · ${L.vt_uneval}: ${undetected}</div>` : ''}
+      ${dateStr ? `<div class="vt-sub">${L.vt_last_analysis} : ${dateStr}</div>` : ''}
+      <div class="vt-actions">
+        <a href="${escapeHtml(guiUrl)}" target="_blank" rel="noopener noreferrer" class="ext-link" style="font-size:11px">${L.vt_full_report}</a>
+        <button class="copy-url vt-recheck">${L.vt_reanalyze}</button>
+        <button class="copy-url vt-changekey" style="color:var(--muted)">${L.vt_changekey}</button>
+      </div>
+    </div>`;
+
+  resultArea.querySelector('.vt-recheck').addEventListener('click', () => runVtCheck(targetUrl, resultArea));
+  resultArea.querySelector('.vt-changekey').addEventListener('click', () => { clearVtKey(); showVtModal(targetUrl, resultArea); });
+}
+
+// ── Collecte des URLs ────────────────────────────────────────────────────────
+function collectInputLines() {
+  const raw = $('input').value || '';
+  const lines = raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+  if (lines.length === 1 && !/^https?:\/\//i.test(lines[0])) {
+    const matches = raw.match(/https?:\/\/\S+/g);
+    if (matches?.length) return matches.map(s => s.replace(/[)\],.]+$/, '').trim());
+  }
+  return lines;
+}
+
+// ── Analyse d'une URL ────────────────────────────────────────────────────────
+async function analyzeOne(inputUrl) {
+  const L = T[currentLang];
+  const row = { inputUrl, proofpoint: null, decodedUrl: null, isShort: false, finalUrl: null, notes: [], errors: [] };
+
+  const su = safeUrl(inputUrl);
+  if (!su) { row.errors.push(L.err_invalid_url); return row; }
+
+  // Proofpoint decode
+  try {
+    if (UD_PATTERN.test(su)) {
+      const { decoded, version } = decodeProofpoint(su);
+      row.proofpoint = `${L.pp_yes} (${version})`;
+      row.decodedUrl = decoded;
+    } else {
+      row.proofpoint = L.pp_no;
+      row.decodedUrl = su;
+    }
+  } catch (e) {
+    row.proofpoint = L.pp_failed;
+    row.decodedUrl = su;
+    row.errors.push(String(e?.message || e));
+  }
+
+  // Shortener detect
+  row.isShort = isShortener(row.decodedUrl);
+
+  // Best-effort expand
+  if (row.isShort) {
+    const expanded = await expandShortUrlBestEffort(row.decodedUrl);
+    if (expanded && safeUrl(expanded)) {
+      row.finalUrl = expanded;
+      if (expanded !== row.decodedUrl) row.notes.push(L.note_redirect);
+    } else {
+      row.finalUrl = null;
+      row.notes.push(L.note_unresolved);
+    }
+  } else {
+    row.finalUrl = row.decodedUrl;
+  }
+
+  return row;
+}
+
+// ── Analyse principale (parallèle) ──────────────────────────────────────────
+async function analyzeAll() {
+  const urls = collectInputLines();
+  $('results').innerHTML = '';
+  const L = T[currentLang];
+  if (!urls.length) {
+    setStatus(`<span class="warn">${L.status_paste}</span>`);
+    return;
+  }
+
+  setStatus(`<span class="spinner"></span><span class="ok">${L.status_analyzing}</span> ${urls.length} URL${urls.length > 1 ? 's' : ''}`);
+  $('analyzeBtn').disabled = true;
+
+  try {
+    const results = await Promise.all(urls.map(url => analyzeOne(url)));
+    results.forEach((r, i) => $('results').appendChild(renderResultCard(i, r)));
+
+    const highCount   = results.filter(r => assessRisk(r).level === 'high').length;
+    const medCount    = results.filter(r => assessRisk(r).level === 'medium').length;
+    let summary = `<span class="ok">${L.status_done}</span> ${results.length} ${L.status_results}.`;
+    if (highCount)    summary += ` <span class="bad">✕ ${highCount} ${L.status_high}.</span>`;
+    else if (medCount) summary += ` <span class="warn">⚠ ${medCount} ${L.status_medium}.</span>`;
+    setStatus(summary);
+
+    window.__lastResults = results;
+  } finally {
+    $('analyzeBtn').disabled = false;
+  }
+}
+
+// ── Clipboard export ─────────────────────────────────────────────────────────
+function formatResultsForClipboard(results) {
+  const L = T[currentLang];
+  const lines = [];
+  for (const r of results || []) {
+    lines.push('---');
+    lines.push(`${L.clipboard_entry}: ${r.inputUrl}`);
+    lines.push(`${L.clipboard_proofpoint}: ${r.proofpoint}`);
+    lines.push(`${L.clipboard_decoded}: ${r.decodedUrl || ''}`);
+    lines.push(`${L.clipboard_shortener}: ${r.isShort ? L.clipboard_yes : L.clipboard_no}`);
+    lines.push(`${L.clipboard_final}: ${r.finalUrl || ''}`);
+    const { level, reasons } = assessRisk(r);
+    lines.push(`${L.clipboard_risk}: ${riskLabel('risk_' + level)} — ${reasons.join(', ')}`);
+    if (r.notes?.length)  lines.push(`${L.clipboard_notes}: ${r.notes.join(' | ')}`);
+    if (r.errors?.length) lines.push(`${L.clipboard_errors}: ${r.errors.join(' | ')}`);
+  }
+  return lines.join('\n');
+}
+
+// ── Événements ───────────────────────────────────────────────────────────────
+$('analyzeBtn').addEventListener('click', analyzeAll);
+
+$('clearBtn').addEventListener('click', () => {
+  $('input').value = '';
+  $('results').innerHTML = '';
+  setStatus('');
+  window.__lastResults = null;
+});
+
+$('copyBtn').addEventListener('click', async () => {
+  const L = T[currentLang];
+  const txt = formatResultsForClipboard(window.__lastResults || []);
+  if (!txt.trim()) { setStatus(`<span class="warn">${L.status_no_results}</span>`); return; }
+  try {
+    await navigator.clipboard.writeText(txt);
+    setStatus(`<span class="ok">${L.status_copied}</span>`);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = txt;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    setStatus(`<span class="ok">${L.status_copied_fb}</span>`);
+  }
+});
+
+$('input').addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') analyzeAll();
+});
+
+// ── Language toggle ──────────────────────────────────────────────────────────
+document.querySelectorAll('.lang-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentLang = btn.dataset.lang;
+    localStorage.setItem('urlAnalyzer_lang', currentLang);
+    applyLang();
+  });
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+applyLang();
+</script>
+</body>
+</html>
